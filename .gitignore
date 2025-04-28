@@ -1,5 +1,16 @@
 # Ignore virtual environments
+Tools_Project/
+Project-01/
 venv/
+
+# Python cache files
 __pycache__/
 *.pyc
+
+# Mac system files
 .DS_Store
+
+# Other temporary files
+*.log
+*.tmp
+
