@@ -1,0 +1,16 @@
+name: Refresh Streamlit Dashboard
+
+on:
+  push:
+    paths:
+      - 'data/**'
+      - 'app.py'
+      - '.github/workflows/**'
+
+jobs:
+  ping-streamlit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Streamlit Cloud to refresh
+        run: |
+          echo "New data pushed. Streamlit Cloud will auto-refresh."
