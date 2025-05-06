@@ -65,7 +65,7 @@ with st.sidebar:
     )
 
 # ---------------------------------------------------
-# Page 1: Ready for Review (Based Only on Application Signed?)
+# Page 1: Reafddy for Review (Based Only on Application Signed?)
 # ---------------------------------------------------
 if selected == "Ready for Review":
     st.title("📄 Applications Ready for Review")
