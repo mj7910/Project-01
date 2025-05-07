@@ -9,7 +9,7 @@ from streamlit_option_menu import option_menu
 st.set_page_config(page_title="Cancer Support Dashboard", layout="wide")
 
 # ---------------------------------------------------
-# Load and Clean Dat
+# Load and Clean Datsdsd
 # ---------------------------------------------------
 @st.cache_data
 def load_data():
