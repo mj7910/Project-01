@@ -36,6 +36,9 @@ def load_data():
 
     if 'Pt_Zip' in df.columns:
         df['Pt_Zip'] = df['Pt_Zip'].astype(str).str.strip()
+    if 'Total_Household_Gross_Monthly_Income' in df.columns:
+    df['Total_Household_Gross_Monthly_Income'] = pd.to_numeric(df['Total_Household_Gross_Monthly_Income'], errors='coerce')
+
 
     if 'DOB' in df.columns:
         df['Age'] = (pd.Timestamp.today() - df['DOB']).dt.days // 365
