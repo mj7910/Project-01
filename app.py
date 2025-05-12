@@ -150,7 +150,7 @@ if selected == "Ready for Review":
         return str(value).strip()
 
     if not ready_df.empty:
-        default_id = 240284
+        default_id = 240264
         available_ids = ready_df[anon_col].unique().tolist()
 
         if 'current_index' not in st.session_state:
