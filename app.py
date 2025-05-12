@@ -14,7 +14,7 @@ st.set_page_config(page_title="Cancer Support Dashboard", layout="wide")
 # ---------------------------------------------------
 # Load and Clean Data
 # ---------------------------------------------------
-@st.cache_data
+# @st.cache_data
 def load_data():
     df = pd.read_excel('data/Data.xlsx')
     df.columns = df.columns.str.strip().str.replace(' ', '_').str.replace('/', '_').str.replace('-', '_')
