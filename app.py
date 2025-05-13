@@ -136,7 +136,7 @@ if selected == "Ready for Review":
 
     if 'Request_Status' in ready_df.columns:
         statuses = sorted(ready_df['Request_Status'].dropna().unique())
-        selected_status = st.selectbox("Filter by Request Status", ["All"] + statuses)
+        selected_status = st.selectbox("Filter by Request Status", ["All"] + statuses, index=(["All"] + statuses).index("Pending") if "Pending" in statuses else 0)
         if selected_status != "All":
             ready_df = ready_df[ready_df['Request_Status'] == selected_status]
 
@@ -158,6 +158,10 @@ if selected == "Ready for Review":
             st.session_state['current_index'] = (
                 available_ids.index(default_id) if default_id in available_ids else 0
             )
+
+        # ✅ SAFETY CHECK FOR INDEX RANGE
+        if st.session_state['current_index'] >= len(available_ids):
+            st.session_state['current_index'] = 0
 
         col_prev, col_next = st.columns([1, 1])
         with col_prev:
@@ -225,6 +229,7 @@ if selected == "Ready for Review":
                 </div>
             </div>
             """, unsafe_allow_html=True)
+
 
 # ---------------------------------------------------
 # ---------------------------------------------------
