@@ -145,34 +145,28 @@ if selected == "Ready for Review":
 
     st.subheader("👤 View Patient Profile")
 
-def safe_get(value):
-    if pd.isna(value) or str(value).strip().lower() in ["missing", "nan", "nat", "none"]:
-        return "N/A"
-    return str(value).strip()
+    def safe_get(value):
+        if pd.isna(value) or str(value).strip().lower() in ["missing", "nan", "nat", "none"]:
+            return "N/A"
+        return str(value).strip()
 
-if not ready_df.empty:
-    available_ids = ready_df[anon_col].unique().tolist()
+    if not ready_df.empty:
+        default_id = 240264
+        available_ids = ready_df[anon_col].unique().tolist()
 
-    default_id = 240264
-    default_index = available_ids.index(default_id) if default_id in available_ids else 0
+        if 'current_index' not in st.session_state:
+            st.session_state['current_index'] = (
+                available_ids.index(default_id) if default_id in available_ids else 0
+            )
 
-    if 'current_index' not in st.session_state:
-        st.session_state['current_index'] = default_index
+        col_prev, col_next = st.columns([1, 1])
+        with col_prev:
+            if st.button("⬅️ Previous") and st.session_state['current_index'] > 0:
+                st.session_state['current_index'] -= 1
+        with col_next:
+            if st.button("Next ➡️") and st.session_state['current_index'] < len(available_ids) - 1:
+                st.session_state['current_index'] += 1
 
-    # Clamp the index to valid range
-    st.session_state['current_index'] = min(st.session_state['current_index'], len(available_ids) - 1)
-
-    # Navigation buttons
-    col_prev, col_next = st.columns([1, 1])
-    with col_prev:
-        if st.button("⬅️ Previous") and st.session_state['current_index'] > 0:
-            st.session_state['current_index'] -= 1
-    with col_next:
-        if st.button("Next ➡️") and st.session_state['current_index'] < len(available_ids) - 1:
-            st.session_state['current_index'] += 1
-
-    # Render only if list is not empty
-    if available_ids:
         selected_id = st.selectbox("Select Patient ID", available_ids, index=st.session_state['current_index'])
         st.session_state['current_index'] = available_ids.index(selected_id)
 
@@ -231,8 +225,6 @@ if not ready_df.empty:
                 </div>
             </div>
             """, unsafe_allow_html=True)
-else:
-    st.warning("⚠️ No applications available to display a profile.")
 
 # ---------------------------------------------------
 # ---------------------------------------------------
