@@ -36,8 +36,6 @@ def load_data():
 
     if 'Pt_Zip' in df.columns:
         df['Pt_Zip'] = df['Pt_Zip'].astype(str).str.strip()
-    if 'Total_Household_Gross_Monthly_Income' in df.columns:
-    df['Total_Household_Gross_Monthly_Income'] = pd.to_numeric(df['Total_Household_Gross_Monthly_Income'], errors='coerce')
 
 
     if 'DOB' in df.columns:
@@ -138,37 +136,52 @@ if selected == "Ready for Review":
 
     if 'Request_Status' in ready_df.columns:
         statuses = sorted(ready_df['Request_Status'].dropna().unique())
-        selected_status = st.selectbox("Filter by Request Status", ["All"] + statuses)
+        default_status = "Pending"
+        default_index = statuses.index(default_status) if default_status in statuses else 0
+
+        selected_status = st.selectbox(
+            "Filter by Request Status",
+            ["All"] + statuses,
+            index=default_index + 1  # +1 to account for "All" at index 0
+        )
+
         if selected_status != "All":
             ready_df = ready_df[ready_df['Request_Status'] == selected_status]
 
     st.download_button("📥 Download Ready Applications", ready_df.to_csv(index=False), file_name="ready_applications.csv")
     st.dataframe(ready_df)
 
+
     st.subheader("👤 View Patient Profile")
 
-    def safe_get(value):
-        if pd.isna(value) or str(value).strip().lower() in ["missing", "nan", "nat", "none"]:
-            return "N/A"
-        return str(value).strip()
+def safe_get(value):
+    if pd.isna(value) or str(value).strip().lower() in ["missing", "nan", "nat", "none"]:
+        return "N/A"
+    return str(value).strip()
 
-    if not ready_df.empty:
-        default_id = 240264
-        available_ids = ready_df[anon_col].unique().tolist()
+if not ready_df.empty:
+    available_ids = ready_df[anon_col].unique().tolist()
 
-        if 'current_index' not in st.session_state:
-            st.session_state['current_index'] = (
-                available_ids.index(default_id) if default_id in available_ids else 0
-            )
+    default_id = 240264
+    default_index = available_ids.index(default_id) if default_id in available_ids else 0
 
-        col_prev, col_next = st.columns([1, 1])
-        with col_prev:
-            if st.button("⬅️ Previous") and st.session_state['current_index'] > 0:
-                st.session_state['current_index'] -= 1
-        with col_next:
-            if st.button("Next ➡️") and st.session_state['current_index'] < len(available_ids) - 1:
-                st.session_state['current_index'] += 1
+    if 'current_index' not in st.session_state:
+        st.session_state['current_index'] = default_index
 
+    # Clamp the index to valid range
+    st.session_state['current_index'] = min(st.session_state['current_index'], len(available_ids) - 1)
+
+    # Navigation buttons
+    col_prev, col_next = st.columns([1, 1])
+    with col_prev:
+        if st.button("⬅️ Previous") and st.session_state['current_index'] > 0:
+            st.session_state['current_index'] -= 1
+    with col_next:
+        if st.button("Next ➡️") and st.session_state['current_index'] < len(available_ids) - 1:
+            st.session_state['current_index'] += 1
+
+    # Render only if list is not empty
+    if available_ids:
         selected_id = st.selectbox("Select Patient ID", available_ids, index=st.session_state['current_index'])
         st.session_state['current_index'] = available_ids.index(selected_id)
 
@@ -227,6 +240,8 @@ if selected == "Ready for Review":
                 </div>
             </div>
             """, unsafe_allow_html=True)
+else:
+    st.warning("⚠️ No applications available to display a profile.")
 
 # ---------------------------------------------------
 # ---------------------------------------------------
