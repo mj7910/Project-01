@@ -136,21 +136,12 @@ if selected == "Ready for Review":
 
     if 'Request_Status' in ready_df.columns:
         statuses = sorted(ready_df['Request_Status'].dropna().unique())
-        default_status = "Pending"
-        default_index = statuses.index(default_status) if default_status in statuses else 0
-
-        selected_status = st.selectbox(
-            "Filter by Request Status",
-            ["All"] + statuses,
-            index=default_index + 1  # +1 to account for "All" at index 0
-        )
-
+        selected_status = st.selectbox("Filter by Request Status", ["All"] + statuses)
         if selected_status != "All":
             ready_df = ready_df[ready_df['Request_Status'] == selected_status]
 
     st.download_button("📥 Download Ready Applications", ready_df.to_csv(index=False), file_name="ready_applications.csv")
     st.dataframe(ready_df)
-
 
     st.subheader("👤 View Patient Profile")
 
